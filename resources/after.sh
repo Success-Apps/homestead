@@ -1,23 +1,41 @@
-#!/bin/sh
+#!/usr/bin/env bash
 
-# If you would like to do some extra provisioning you may
-# add any commands you wish to this file and they will
-# be run after the Homestead machine is provisioned.
-#
-# If you have user-specific configurations you would like
-# to apply, you may also create user-customizations.sh,
-# which will be run after this script.
+DYNAMODB_USER=vagrant
 
+sudo apt-get install openjdk-11-jre-headless -y
 
-# If you're not quite ready for the latest Node.js version,
-# uncomment these lines to roll back to a previous version
+cd /home/${DYNAMODB_USER}/
+mkdir -p dynamodb
+cd dynamodb
 
-# Remove current Node.js version:
-#sudo apt-get -y purge nodejs
-#sudo rm -rf /usr/lib/node_modules/npm/lib
-#sudo rm -rf //etc/apt/sources.list.d/nodesource.list
+wget https://s3-ap-southeast-1.amazonaws.com/dynamodb-local-singapore/dynamodb_local_latest.tar.gz
+tar -xvzf dynamodb_local_latest.tar.gz
+rm dynamodb_local_latest.tar.gz
 
-# Install Node.js Version desired (i.e. v13)
-# More info: https://github.com/nodesource/distributions/blob/master/README.md#debinstall
-#curl -sL https://deb.nodesource.com/setup_13.x | sudo -E bash -
-#sudo apt-get install -y nodejs
+# DynamoDb script
+cat >> dynamodb.sh << EOF
+#!/usr/bin/env bash
+
+cd /home/${DYNAMODB_USER}/dynamodb
+exec java -Djava.library.path=./DynamoDBLocal_lib -jar DynamoDBLocal.jar -sharedDb -dbPath /home/${DYNAMODB_USER}/dynamodb --port 3000
+EOF
+
+chmod a+x dynamodb.sh
+
+# DynamoDb service
+cat >> dynamodb.service << EOF
+[Unit]
+Description="DynamoDB"
+
+[Service]
+Type=forking
+ExecStart=/home/${DYNAMODB_USER}/dynamodb/dynamodb.sh
+
+[Install]
+WantedBy=multi-user.target
+EOF
+sudo cp /home/${DYNAMODB_USER}/dynamodb/dynamodb.service /etc/systemd/system/dynamodb.service
+
+sudo systemctl daemon-reload
+sudo systemctl enable dyanmodb.service
+sudo systemctl start dyanmodb.service
