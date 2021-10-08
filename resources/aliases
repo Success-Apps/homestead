@@ -9,6 +9,7 @@ alias codecept='vendor/bin/codecept'
 alias phpspec='vendor/bin/phpspec'
 alias phpunit='vendor/bin/phpunit'
 alias serve=serve-laravel
+alias vapor='vendor/bin/vapor'
 
 alias xoff='sudo phpdismod -s cli xdebug'
 alias xon='sudo phpenmod -s cli xdebug'

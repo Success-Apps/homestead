@@ -17,7 +17,7 @@ cat >> dynamodb.sh << EOF
 #!/usr/bin/env bash
 
 cd /home/${DYNAMODB_USER}/dynamodb
-exec java -Djava.library.path=./DynamoDBLocal_lib -jar DynamoDBLocal.jar -sharedDb -dbPath /home/${DYNAMODB_USER}/dynamodb --port 3000
+nohup java -Djava.library.path=./DynamoDBLocal_lib -jar DynamoDBLocal.jar -sharedDb -dbPath /home/${DYNAMODB_USER}/dynamodb --port 3000 &
 EOF
 
 chmod a+x dynamodb.sh
@@ -37,5 +37,5 @@ EOF
 sudo cp /home/${DYNAMODB_USER}/dynamodb/dynamodb.service /etc/systemd/system/dynamodb.service
 
 sudo systemctl daemon-reload
-sudo systemctl enable dyanmodb.service
-sudo systemctl start dyanmodb.service
+sudo systemctl enable dynamodb.service
+sudo systemctl start dynamodb.service
