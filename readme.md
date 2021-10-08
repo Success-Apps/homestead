@@ -40,3 +40,10 @@ $ mkdir homestead && \
 ```
 
 After it's complete, `vendor/laravel/homestead` will be a git checkout and can be used normally.
+
+
+## Developing Success Apps
+
+Use the `development` branch when you're going to develop in success applications. Thius branch includes the following services:
+
+- DynamoDB
